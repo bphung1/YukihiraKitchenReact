@@ -1,12 +1,16 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Container, Header, List } from "semantic-ui-react";
+import { Container } from "semantic-ui-react";
 import { Recipe } from "../models/recipe";
 import NavBar from "./NavBar";
 import RecipeDashboard from "../../features/recipes/dashboard/RecipeDashboard";
+import { v4 as uuid } from "uuid";
 
 function App() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [selectedRecipe, setSelectedRecipe] =
+    useState<Recipe | undefined>(undefined);
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     axios
@@ -16,11 +20,50 @@ function App() {
       });
   }, []);
 
+  function handleSelectRecipe(id: string) {
+    setSelectedRecipe(recipes.find((x) => x.id === id));
+  }
+
+  function handleCancelSelectRecipe() {
+    setSelectedRecipe(undefined);
+  }
+
+  function handleFormOpen(id?: string) {
+    id ? handleSelectRecipe(id) : handleCancelSelectRecipe();
+    setEditMode(true);
+  }
+
+  function handleFormClose() {
+    setEditMode(false);
+  }
+
+  function handleCreateOrEditRecipe(recipe: Recipe) {
+    recipe.id
+      ? setRecipes([...recipes.filter((x) => x.id !== recipe.id), recipe])
+      : setRecipes([...recipes, { ...recipe, id: uuid() }]);
+    setEditMode(false);
+    setSelectedRecipe(recipe);
+  }
+
+  function handleDeleteRecipe(id: string) {
+    setRecipes([...recipes.filter((x) => x.id !== id)]);
+  }
+
   return (
     <>
-      <NavBar />
+      <NavBar openForm={handleFormOpen} />
       <Container style={{ marginTop: "7em" }}>
-        <RecipeDashboard recipes={recipes} />
+        <RecipeDashboard
+          recipes={recipes}
+          selectedRecipe={selectedRecipe}
+          selectRecipe={handleSelectRecipe}
+          cancelSelectRecipe={handleCancelSelectRecipe}
+          editMode={editMode}
+          openForm={handleFormOpen}
+          closeForm={handleFormClose}
+          createOrEdit={handleCreateOrEditRecipe}
+          deleteRecipe={handleDeleteRecipe}
+        />
       </Container>
     </>
   );
