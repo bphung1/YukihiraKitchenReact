@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Container } from "semantic-ui-react";
 import { Recipe } from "../models/recipe";
 import NavBar from "./NavBar";
 import RecipeDashboard from "../../features/recipes/dashboard/RecipeDashboard";
 import { v4 as uuid } from "uuid";
+import agent from "../api/agent";
+import LoadingComponent from "./LoadingComponent";
 
 function App() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [selectedRecipe, setSelectedRecipe] =
     useState<Recipe | undefined>(undefined);
   const [editMode, setEditMode] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    axios
-      .get<Recipe[]>("https://localhost:44351/api/Recipes")
-      .then((response) => {
-        setRecipes(response.data);
-      });
+    agent.Recipes.list().then((response) => {
+      setRecipes(response);
+      setLoading(false);
+    });
   }, []);
 
   function handleSelectRecipe(id: string) {
@@ -38,16 +40,34 @@ function App() {
   }
 
   function handleCreateOrEditRecipe(recipe: Recipe) {
-    recipe.id
-      ? setRecipes([...recipes.filter((x) => x.id !== recipe.id), recipe])
-      : setRecipes([...recipes, { ...recipe, id: uuid() }]);
-    setEditMode(false);
-    setSelectedRecipe(recipe);
+    setSubmitting(true);
+    if (recipe.id) {
+      agent.Recipes.update(recipe).then(() => {
+        setRecipes([...recipes.filter((x) => x.id !== recipe.id), recipe]);
+        setSelectedRecipe(recipe);
+        setEditMode(false);
+        setSubmitting(false);
+      });
+    } else {
+      recipe.id = uuid();
+      agent.Recipes.create(recipe).then(() => {
+        setRecipes([...recipes, recipe]);
+        setSelectedRecipe(recipe);
+        setEditMode(false);
+        setSubmitting(false);
+      });
+    }
   }
 
   function handleDeleteRecipe(id: string) {
-    setRecipes([...recipes.filter((x) => x.id !== id)]);
+    setSubmitting(true);
+    agent.Recipes.delete(id).then(() => {
+      setRecipes([...recipes.filter((x) => x.id !== id)]);
+      setSubmitting(false);
+    });
   }
+
+  if (loading) return <LoadingComponent content="Loading..." />;
 
   return (
     <>
@@ -63,6 +83,7 @@ function App() {
           closeForm={handleFormClose}
           createOrEdit={handleCreateOrEditRecipe}
           deleteRecipe={handleDeleteRecipe}
+          submitting={submitting}
         />
       </Container>
     </>

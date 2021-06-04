@@ -6,12 +6,14 @@ interface Props {
   recipe: Recipe | undefined;
   closeForm: () => void;
   createOrEdit: (recipe: Recipe) => void;
+  submitting: boolean;
 }
 
 export default function RecipeForm({
   recipe: selectedRecipe,
   closeForm,
   createOrEdit,
+  submitting,
 }: Props) {
   const initialState = selectedRecipe ?? {
     id: "",
@@ -59,7 +61,13 @@ export default function RecipeForm({
           name="temperature"
           onChange={handleInputChange}
         />
-        <Button floated="right" positive type="submit" content="Submit" />
+        <Button
+          loading={submitting}
+          floated="right"
+          positive
+          type="submit"
+          content="Submit"
+        />
         <Button
           onClick={closeForm}
           floated="right"

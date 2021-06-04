@@ -15,6 +15,7 @@ interface Props {
   closeForm: () => void;
   createOrEdit: (recipe: Recipe) => void;
   deleteRecipe: (id: string) => void;
+  submitting: boolean;
 }
 
 export default function RecipeDashboard({
@@ -27,6 +28,7 @@ export default function RecipeDashboard({
   closeForm,
   createOrEdit,
   deleteRecipe,
+  submitting,
 }: Props) {
   return (
     <Grid>
@@ -35,6 +37,7 @@ export default function RecipeDashboard({
           recipes={recipes}
           selectRecipe={selectRecipe}
           deleteRecipe={deleteRecipe}
+          submitting={submitting}
         />
       </Grid.Column>
 
@@ -51,6 +54,7 @@ export default function RecipeDashboard({
             closeForm={closeForm}
             recipe={selectedRecipe}
             createOrEdit={createOrEdit}
+            submitting={submitting}
           />
         )}
       </Grid.Column>
