@@ -1,7 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
 import { Recipe } from "../models/recipe";
-import { v4 as uuid } from "uuid";
 
 export default class RecipeStore {
   recipeRegistry = new Map<string, Recipe>();
@@ -27,7 +26,7 @@ export default class RecipeStore {
     try {
       const recipes = await agent.Recipes.list();
       recipes.forEach((recipe) => {
-        this.recipeRegistry.set(recipe.id, recipe);
+        this.setRecipe(recipe);
       });
       this.setLoadingInitial(false);
     } catch (error) {
@@ -36,30 +35,44 @@ export default class RecipeStore {
     }
   };
 
+  loadRecipe = async (id: string) => {
+    let recipe = this.getRecipe(id);
+    if (recipe) {
+      this.selectedRecipe = recipe;
+      return recipe;
+    } else {
+      this.loadingInitial = true;
+      try {
+        recipe = await agent.Recipes.details(id);
+        this.setRecipe(recipe);
+        runInAction(() => {
+          this.selectedRecipe = recipe;
+          this.setLoadingInitial(false);
+        });
+        return recipe;
+      } catch (error) {
+        console.log(error);
+        runInAction(() => {
+          this.setLoadingInitial(false);
+        });
+      }
+    }
+  };
+
+  private setRecipe = (recipe: Recipe) => {
+    this.recipeRegistry.set(recipe.id, recipe);
+  };
+
+  private getRecipe = (id: string) => {
+    return this.recipeRegistry.get(id);
+  };
+
   setLoadingInitial = (state: boolean) => {
     this.loadingInitial = state;
   };
 
-  selectRecipe = (id: string) => {
-    this.selectedRecipe = this.recipeRegistry.get(id);
-  };
-
-  cancelSelectedRecipe = () => {
-    this.selectedRecipe = undefined;
-  };
-
-  openForm = (id?: string) => {
-    id ? this.selectRecipe(id) : this.cancelSelectedRecipe();
-    this.editMode = true;
-  };
-
-  closeForm = () => {
-    this.editMode = false;
-  };
-
   createRecipe = async (recipe: Recipe) => {
     this.loading = true;
-    recipe.id = uuid();
     try {
       await agent.Recipes.create(recipe);
       runInAction(() => {
@@ -100,7 +113,6 @@ export default class RecipeStore {
       await agent.Recipes.delete(id);
       runInAction(() => {
         this.recipeRegistry.delete(id);
-        if (this.selectedRecipe?.id === id) this.cancelSelectedRecipe();
         this.loading = false;
       });
     } catch (error) {
