@@ -1,20 +1,12 @@
+import { observer } from "mobx-react-lite";
 import React, { SyntheticEvent, useState } from "react";
 import { Button, Item, Segment } from "semantic-ui-react";
-import { Recipe } from "../../../app/models/recipe";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-  recipes: Recipe[];
-  selectRecipe: (id: string) => void;
-  deleteRecipe: (id: string) => void;
-  submitting: boolean;
-}
+export default observer(function RecipeList() {
+  const { recipeStore } = useStore();
+  const { deleteRecipe, recipesByName, loading } = recipeStore;
 
-export default function RecipeList({
-  recipes,
-  selectRecipe,
-  deleteRecipe,
-  submitting,
-}: Props) {
   const [target, setTarget] = useState("");
 
   function handleRecipeDelete(
@@ -28,7 +20,7 @@ export default function RecipeList({
   return (
     <Segment clearing>
       <Item.Group divided>
-        {recipes.map((recipe) => (
+        {recipesByName.map((recipe) => (
           <Item key={recipe.id}>
             <Item.Content>
               <Item.Header as="a">{recipe.recipeName}</Item.Header>
@@ -38,14 +30,14 @@ export default function RecipeList({
               </Item.Description>
               <Item.Extra>
                 <Button
-                  onClick={() => selectRecipe(recipe.id)}
+                  onClick={() => recipeStore.selectRecipe(recipe.id)}
                   floated="right"
                   content="View"
                   color="blue"
                 />
                 <Button
                   name={recipe.id}
-                  loading={submitting && target === recipe.id}
+                  loading={loading && target === recipe.id}
                   onClick={(e) => handleRecipeDelete(e, recipe.id)}
                   floated="right"
                   content="Delete"
@@ -58,4 +50,4 @@ export default function RecipeList({
       </Item.Group>
     </Segment>
   );
-}
+});

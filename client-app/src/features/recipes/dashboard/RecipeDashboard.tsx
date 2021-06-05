@@ -1,71 +1,31 @@
+import { observer } from "mobx-react-lite";
 import React from "react";
-import { Grid, Item, Sticky } from "semantic-ui-react";
-import { Recipe } from "../../../app/models/recipe";
+import { Grid } from "semantic-ui-react";
+import Background from "../../../app/layout/Background";
+import { useStore } from "../../../app/stores/store";
 import RecipeDetails from "../details/RecipeDetails";
 import RecipeForm from "../forms/RecipeForm";
 import RecipeList from "./RecipeList";
 
-interface Props {
-  recipes: Recipe[];
-  selectedRecipe: Recipe | undefined;
-  selectRecipe: (id: string) => void;
-  cancelSelectRecipe: () => void;
-  editMode: boolean;
-  openForm: (id: string) => void;
-  closeForm: () => void;
-  createOrEdit: (recipe: Recipe) => void;
-  deleteRecipe: (id: string) => void;
-  submitting: boolean;
-}
+export default observer(function RecipeDashboard() {
+  const { recipeStore } = useStore();
+  const { selectedRecipe, editMode } = recipeStore;
 
-export default function RecipeDashboard({
-  recipes,
-  selectedRecipe,
-  selectRecipe,
-  cancelSelectRecipe,
-  editMode,
-  openForm,
-  closeForm,
-  createOrEdit,
-  deleteRecipe,
-  submitting,
-}: Props) {
   return (
     <Grid>
       <Grid.Column width="8">
-        <RecipeList
-          recipes={recipes}
-          selectRecipe={selectRecipe}
-          deleteRecipe={deleteRecipe}
-          submitting={submitting}
-        />
+        <RecipeList />
       </Grid.Column>
 
       <Grid.Column width="6">
-        {selectedRecipe && !editMode && (
-          <RecipeDetails
-            recipe={selectedRecipe}
-            cancelSelectRecipe={cancelSelectRecipe}
-            openForm={openForm}
-          />
-        )}
-        {editMode && (
-          <RecipeForm
-            closeForm={closeForm}
-            recipe={selectedRecipe}
-            createOrEdit={createOrEdit}
-            submitting={submitting}
-          />
-        )}
+        {selectedRecipe && !editMode && <RecipeDetails />}
+        {editMode && <RecipeForm />}
+        {!editMode && <Background />}
       </Grid.Column>
-
+      {/* 
       <Grid.Column>
-        <Sticky offset={100} position="absolute">
-          <Item className="ui sticky">
-            <img src="/assets/soma.png" alt="Soma" />
-          </Item>
-        </Sticky>
-      </Grid.Column>
+        <Background />
+      </Grid.Column> */}
     </Grid>
   );
-}
+});

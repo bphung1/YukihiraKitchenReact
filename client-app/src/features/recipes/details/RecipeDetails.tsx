@@ -1,18 +1,19 @@
+import { observer } from "mobx-react-lite";
 import React from "react";
 import { Button, Card, Image } from "semantic-ui-react";
-import { Recipe } from "../../../app/models/recipe";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-  recipe: Recipe;
-  cancelSelectRecipe: () => void;
-  openForm: (id: string) => void;
-}
+export default observer(function RecipeDetails() {
+  const { recipeStore } = useStore();
+  const {
+    selectedRecipe: recipe,
+    openForm,
+    cancelSelectedRecipe,
+  } = recipeStore;
 
-export default function RecipeDetails({
-  recipe,
-  cancelSelectRecipe,
-  openForm,
-}: Props) {
+  if (!recipe) return <LoadingComponent />;
+
   return (
     <Card fluid>
       <Image src={`/assets/pizza.png`} />
@@ -32,7 +33,7 @@ export default function RecipeDetails({
             content="Edit"
           />
           <Button
-            onClick={cancelSelectRecipe}
+            onClick={cancelSelectedRecipe}
             basic
             color="grey"
             content="Cancel"
@@ -41,4 +42,4 @@ export default function RecipeDetails({
       </Card.Content>
     </Card>
   );
-}
+});

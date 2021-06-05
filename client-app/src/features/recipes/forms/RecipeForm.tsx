@@ -1,20 +1,13 @@
+import { observer } from "mobx-react-lite";
 import React, { ChangeEvent, useState } from "react";
 import { Button, Form, Segment } from "semantic-ui-react";
-import { Recipe } from "../../../app/models/recipe";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-  recipe: Recipe | undefined;
-  closeForm: () => void;
-  createOrEdit: (recipe: Recipe) => void;
-  submitting: boolean;
-}
+export default observer(function RecipeForm() {
+  const { recipeStore } = useStore();
+  const { selectedRecipe, closeForm, createRecipe, updateRecipe, loading } =
+    recipeStore;
 
-export default function RecipeForm({
-  recipe: selectedRecipe,
-  closeForm,
-  createOrEdit,
-  submitting,
-}: Props) {
   const initialState = selectedRecipe ?? {
     id: "",
     recipeName: "",
@@ -26,7 +19,7 @@ export default function RecipeForm({
   const [recipe, setRecipe] = useState(initialState);
 
   function handleSubmit() {
-    createOrEdit(recipe);
+    recipe.id ? updateRecipe(recipe) : createRecipe(recipe);
   }
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
@@ -62,7 +55,7 @@ export default function RecipeForm({
           onChange={handleInputChange}
         />
         <Button
-          loading={submitting}
+          loading={loading}
           floated="right"
           positive
           type="submit"
@@ -77,4 +70,4 @@ export default function RecipeForm({
       </Form>
     </Segment>
   );
-}
+});

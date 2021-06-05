@@ -10,7 +10,3 @@ body {
     rgb(211, 101, 11) 89%
   ) !important;
 }
-
-.ui.sticky {
-  position: absolute;
-}
