@@ -1,55 +1,17 @@
 import { observer } from "mobx-react-lite";
-import React, { SyntheticEvent, useState } from "react";
-import { Link } from "react-router-dom";
-import { Button, Item, Segment } from "semantic-ui-react";
+import React from "react";
 import { useStore } from "../../../app/stores/store";
+import RecipeListItem from "./RecipeListItem";
 
 export default observer(function RecipeList() {
   const { recipeStore } = useStore();
-  const { deleteRecipe, recipesByName, loading } = recipeStore;
-
-  const [target, setTarget] = useState("");
-
-  function handleRecipeDelete(
-    e: SyntheticEvent<HTMLButtonElement>,
-    id: string
-  ) {
-    setTarget(e.currentTarget.name);
-    deleteRecipe(id);
-  }
+  const { recipesByName } = recipeStore;
 
   return (
-    <Segment clearing>
-      <Item.Group divided>
-        {recipesByName.map((recipe) => (
-          <Item key={recipe.id}>
-            <Item.Content>
-              <Item.Header as="a">{recipe.recipeName}</Item.Header>
-              <Item.Meta>Description</Item.Meta>
-              <Item.Description>
-                <div>{recipe.description}</div>
-              </Item.Description>
-              <Item.Extra>
-                <Button
-                  as={Link}
-                  to={`/recipes/${recipe.id}`}
-                  floated="right"
-                  content="View"
-                  color="blue"
-                />
-                <Button
-                  name={recipe.id}
-                  loading={loading && target === recipe.id}
-                  onClick={(e) => handleRecipeDelete(e, recipe.id)}
-                  floated="right"
-                  content="Delete"
-                  color="red"
-                />
-              </Item.Extra>
-            </Item.Content>
-          </Item>
-        ))}
-      </Item.Group>
-    </Segment>
+    <>
+      {recipesByName.map((recipe) => (
+        <RecipeListItem key={recipe.id} recipe={recipe} />
+      ))}
+    </>
   );
 });

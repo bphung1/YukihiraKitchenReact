@@ -21,6 +21,34 @@ export default class RecipeStore {
     });
   }
 
+  // get groupedRecipes() {
+  //   return Object.entries(
+  //     this.recipesByName.reduce((recipes, recipe) => {
+  //       const name = recipe.recipeName;
+  //       const firstLetter = name.charAt(0);
+
+  //       recipes[name] = recipes[name] ? [...recipes[name], recipe] : [recipe];
+
+  //       return recipes;
+  //     }, {} as { [key: string]: Recipe[] })
+  //   );
+  // }
+
+  //implement once cetegory is included
+  // get groupedRecipes() {
+  //   return Object.entries(
+  //     this.recipesByName.reduce((recipes, recipe) => {
+  //       const category = recipe.category;
+
+  //       recipes[category] = recipes[category]
+  //         ? [...recipes[category], recipe]
+  //         : [recipe];
+
+  //       return recipes;
+  //     }, {} as { [key: string]: Recipe[] })
+  //   );
+  // }
+
   loadRecipes = async () => {
     this.setLoadingInitial(true);
     try {

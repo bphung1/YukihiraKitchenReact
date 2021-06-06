@@ -3,15 +3,11 @@ import { Dimmer } from "semantic-ui-react";
 
 interface Props {
   inverted?: boolean;
-  content?: string;
 }
 
-export default function LoadingComponent({
-  inverted = true,
-  content = "Loading....",
-}: Props) {
+export default function LoadingComponent({ inverted = true }: Props) {
   return (
-    <Dimmer active={true} inverted={inverted}>
+    <Dimmer active={true} inverted={inverted} page>
       <img src="/assets/chibisoma.gif" alt="loader" />
     </Dimmer>
   );

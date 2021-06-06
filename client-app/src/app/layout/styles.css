@@ -10,3 +10,48 @@ body {
     rgb(211, 101, 11) 89%
   ) !important;
 }
+
+.ui.sticky.bound {
+  position: unset;
+}
+
+.ui.sticky ::after,
+::before {
+  box-sizing: unset;
+}
+
+.ui.sticky.fixed {
+  position: unset;
+}
+
+/*home page styles*/
+
+.masthead {
+  display: flex;
+  align-items: center;
+  background-image: linear-gradient(
+    135deg,
+    rgb(231, 166, 91) 0%,
+    rgb(236, 127, 38) 69%,
+    rgb(211, 101, 11) 89%
+  ) !important;
+  height: 100vh;
+  padding-bottom: -50px;
+}
+
+.masthead .ui.menu .ui.button,
+.ui.menu a.ui.inverted.button {
+  margin-left: 0.5em;
+}
+
+.masthead h1.ui.header {
+  font-size: 4em;
+  font-weight: normal;
+}
+
+.masthead h2 {
+  font-size: 1.7em;
+  font-weight: normal;
+}
+
+/*end home page styles*/
