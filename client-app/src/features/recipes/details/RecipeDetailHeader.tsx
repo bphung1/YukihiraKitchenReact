@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
+import { Link } from "react-router-dom";
 import { Button, Header, Item, Segment, Image } from "semantic-ui-react";
 import { Recipe } from "../../../app/models/recipe";
 
@@ -41,7 +42,12 @@ export default observer(function RecipeDetailHeader({ recipe }: Props) {
       </Segment>
       <Segment clearing attached="bottom">
         <Button>Delete recipe</Button>
-        <Button color="orange" floated="right">
+        <Button
+          as={Link}
+          to={`/manage/${recipe.id}`}
+          color="orange"
+          floated="right"
+        >
           Manage recipe
         </Button>
       </Segment>

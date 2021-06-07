@@ -15,8 +15,8 @@ export default class RecipeStore {
 
   get recipesByName() {
     return Array.from(this.recipeRegistry.values()).sort((a, b) => {
-      if (a.recipeName < b.recipeName) return -1;
-      if (a.recipeName > b.recipeName) return 1;
+      if (a.recipeName.toUpperCase() < b.recipeName.toUpperCase()) return -1;
+      if (a.recipeName.toUpperCase() > b.recipeName.toUpperCase()) return 1;
       return 0;
     });
   }
