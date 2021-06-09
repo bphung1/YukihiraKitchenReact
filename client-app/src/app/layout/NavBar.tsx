@@ -1,8 +1,14 @@
+import { observer } from "mobx-react-lite";
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Button, Container, Menu } from "semantic-ui-react";
+import { Button, Container, Dropdown, Image, Menu } from "semantic-ui-react";
+import { useStore } from "../stores/store";
 
-export default function NavBar() {
+export default observer(function NavBar() {
+  const {
+    userStore: { user, logout, isLoggedIn },
+  } = useStore();
+
   return (
     <Menu inverted fixed="top">
       <Container>
@@ -15,15 +21,29 @@ export default function NavBar() {
           Yukihira's Kitchen
         </Menu.Item>
         <Menu.Item as={NavLink} to="/recipes" name="Recipes" />
-        <Menu.Item>
-          <Button
-            as={NavLink}
-            to="/createRecipe"
-            positive
-            content="Create Recipe"
-          />
-        </Menu.Item>
+        {isLoggedIn ? (
+          <>
+            <Menu.Item>
+              <Button
+                as={NavLink}
+                to="/createRecipe"
+                positive
+                content="Create Recipe"
+              />
+            </Menu.Item>
+            <Menu.Item position="right">
+              <Image src="/assets/user.png" avatar spaced="right" />
+              <Dropdown pointing="top left" text={user?.displayName}>
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={logout} text="Logout" icon="power" />
+                </Dropdown.Menu>
+              </Dropdown>
+            </Menu.Item>
+          </>
+        ) : (
+          ""
+        )}
       </Container>
     </Menu>
   );
-}
+});

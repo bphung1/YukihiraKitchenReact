@@ -1,8 +1,9 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { Link } from "react-router-dom";
 import { Button, Header, Item, Segment, Image } from "semantic-ui-react";
 import { Recipe } from "../../../app/models/recipe";
+import { useStore } from "../../../app/stores/store";
+import RecipeForm from "../forms/RecipeForm";
 
 const activityImageStyle = {
   filter: "brightness(30%)",
@@ -22,6 +23,8 @@ interface Props {
 }
 
 export default observer(function RecipeDetailHeader({ recipe }: Props) {
+  const { modalStore, userStore } = useStore();
+
   return (
     <Segment.Group>
       <Segment basic attached="top" style={{ padding: "0" }}>
@@ -40,17 +43,24 @@ export default observer(function RecipeDetailHeader({ recipe }: Props) {
           </Item.Group>
         </Segment>
       </Segment>
-      <Segment clearing attached="bottom">
-        <Button>Delete recipe</Button>
-        <Button
-          as={Link}
-          to={`/manage/${recipe.id}`}
-          color="orange"
-          floated="right"
-        >
-          Manage recipe
-        </Button>
-      </Segment>
+      {userStore.isLoggedIn ? (
+        <>
+          <Segment clearing attached="bottom">
+            <Button>Delete recipe</Button>
+            <Button
+              onClick={() =>
+                modalStore.openModal(<RecipeForm id={recipe.id} />)
+              }
+              color="orange"
+              floated="right"
+            >
+              Manage recipe
+            </Button>
+          </Segment>
+        </>
+      ) : (
+        ""
+      )}
     </Segment.Group>
   );
 });

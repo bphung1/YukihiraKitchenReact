@@ -1,24 +1,28 @@
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router";
+import { useHistory } from "react-router";
 import { Button, Header, Segment } from "semantic-ui-react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { useStore } from "../../../app/stores/store";
 import { v4 as uuid } from "uuid";
-import { Link } from "react-router-dom";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import MyTextInput from "../../../app/common/form/MyTextInput";
 import MyNumberInput from "../../../app/common/form/MyNumberInput";
 import MyTextArea from "../../../app/common/form/MyTextArea";
 import { Recipe } from "../../../app/models/recipe";
+import RecipeDetails from "../details/RecipeDetails";
 
-export default observer(function RecipeForm() {
+interface Props {
+  id: string;
+}
+
+export default observer(function RecipeForm({ id }: Props) {
   const history = useHistory();
-  const { recipeStore } = useStore();
+  const { recipeStore, modalStore } = useStore();
   const { createRecipe, updateRecipe, loading, loadRecipe, loadingInitial } =
     recipeStore;
-  const { id } = useParams<{ id: string }>();
+  // const { id } = useParams<{ id: string }>();
 
   const [recipe, setRecipe] = useState<Recipe>({
     id: "",
@@ -53,12 +57,14 @@ export default observer(function RecipeForm() {
         ...recipe,
         id: uuid(),
       };
-      createRecipe(newRecipe).then(() =>
-        history.push(`/recipes/${newRecipe.id}`)
-      );
+      createRecipe(newRecipe).then(() => history.push(`/recipes`));
     } else {
-      updateRecipe(recipe).then(() => history.push(`/recipes/${recipe.id}`));
+      updateRecipe(recipe).then(openModal);
     }
+  }
+
+  function openModal() {
+    return modalStore.openModal(<RecipeDetails id={id} />);
   }
 
   if (loadingInitial) return <LoadingComponent />;
@@ -97,11 +103,10 @@ export default observer(function RecipeForm() {
               content="Submit"
             />
             <Button
-              as={Link}
-              to="/recipes"
               floated="right"
               type="button"
               content="Cancel"
+              onClick={openModal}
             />
           </Form>
         )}

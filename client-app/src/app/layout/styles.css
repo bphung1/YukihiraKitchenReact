@@ -24,6 +24,10 @@ body {
   position: unset;
 }
 
+.modalRecipe {
+  background-color: #fed8b1 !important;
+}
+
 /*home page styles*/
 
 .masthead {

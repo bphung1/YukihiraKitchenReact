@@ -3,12 +3,16 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button, Icon, Item, Segment } from "semantic-ui-react";
 import { Recipe } from "../../../app/models/recipe";
+import { useStore } from "../../../app/stores/store";
+import RecipeDetails from "../details/RecipeDetails";
 
 interface Props {
   recipe: Recipe;
 }
 
 export default observer(function RecipeListItem({ recipe }: Props) {
+  const { modalStore } = useStore();
+
   return (
     <Segment.Group>
       <Segment>
@@ -30,8 +34,7 @@ export default observer(function RecipeListItem({ recipe }: Props) {
           {recipe.description}
         </span>
         <Button
-          as={Link}
-          to={`/recipes/${recipe.id}`}
+          onClick={() => modalStore.openModal(<RecipeDetails id={recipe.id} />)}
           color="teal"
           floated="right"
           content="View"
