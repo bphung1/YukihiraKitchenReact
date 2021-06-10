@@ -25,7 +25,7 @@ body {
 }
 
 .modalRecipe {
-  background-color: #fed8b1 !important;
+  background-color: #fed8b1;
 }
 
 /*home page styles*/
@@ -59,3 +59,30 @@ body {
 }
 
 /*end home page styles*/
+
+.elementToFadeInAndOut {
+  animation: fade 0.3s linear;
+}
+
+.buttonPos {
+  position: fixed;
+  right: 1em;
+  top: 1em;
+}
+
+@keyframes fade {
+  0%,
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.recipe_ingredient-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0rem 3rem;
+  list-style: none;
+}

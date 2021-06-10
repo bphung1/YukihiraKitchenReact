@@ -1,7 +1,8 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { Segment, Grid, Icon } from "semantic-ui-react";
+import { Segment, Grid, Icon, List } from "semantic-ui-react";
 import { Recipe } from "../../../app/models/recipe";
+import RecipeListItemIngredients from "./RecipeListItemIngredients";
 
 interface Props {
   recipe: Recipe;
@@ -26,7 +27,16 @@ export default observer(function ActivityDetailedInfo({ recipe }: Props) {
             <Icon name="add circle" size="large" color="teal" />
           </Grid.Column>
           <Grid.Column width={15}>
-            <span>Ingredients</span>
+            <List divided>
+              <List.Item>
+                <h3 style={{ color: "teal" }}>Ingredients</h3>
+              </List.Item>
+              <List.Item>
+                <RecipeListItemIngredients
+                  ingredients={recipe.recipeIngredients!}
+                />
+              </List.Item>
+            </List>
           </Grid.Column>
         </Grid>
       </Segment>

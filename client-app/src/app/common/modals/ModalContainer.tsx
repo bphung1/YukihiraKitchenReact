@@ -11,8 +11,9 @@ export default observer(function ModalContainer() {
       open={modalStore.modal.open}
       onClose={modalStore.closeModal}
       size="large"
+      className="elementToFadeInAndOut"
     >
-      <Modal.Content>{modalStore.modal.body}</Modal.Content>
+      <Modal.Content scrolling>{modalStore.modal.body}</Modal.Content>
     </Modal>
   );
 });

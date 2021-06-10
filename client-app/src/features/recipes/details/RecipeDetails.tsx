@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
-import { Grid } from "semantic-ui-react";
+import { Button, Grid } from "semantic-ui-react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { useStore } from "../../../app/stores/store";
 import RecipeDetailHeader from "./RecipeDetailHeader";
@@ -11,7 +11,7 @@ interface Props {
 }
 
 export default observer(function RecipeDetails({ id }: Props) {
-  const { recipeStore } = useStore();
+  const { recipeStore, modalStore } = useStore();
   const { selectedRecipe: recipe, loadRecipe, loadingInitial } = recipeStore;
   // const { id } = useParams<{ id: string }>();
 
@@ -24,6 +24,12 @@ export default observer(function RecipeDetails({ id }: Props) {
   return (
     <Grid centered className="modalRecipe">
       <Grid.Column width={12}>
+        <Button
+          content="X"
+          onClick={() => modalStore.closeModal()}
+          className="buttonPos"
+          color="red"
+        />
         <RecipeDetailHeader recipe={recipe} />
         <RecipeDetailInfo recipe={recipe} />
       </Grid.Column>
