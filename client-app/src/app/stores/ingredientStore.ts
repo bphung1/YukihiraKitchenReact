@@ -23,19 +23,4 @@ export default class IngredientStore {
       });
     }
   };
-
-  deleteIngredient = async (id: string, ingredientName: string) => {
-    this.loading = true;
-    try {
-      await agent.Ingredients.delete(id, ingredientName);
-      runInAction(() => {
-        this.loading = false;
-      });
-    } catch (err) {
-      console.log(err);
-      runInAction(() => {
-        this.loading = false;
-      });
-    }
-  };
 }

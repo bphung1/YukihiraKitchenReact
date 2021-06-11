@@ -1,23 +1,27 @@
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
-import { RecipeIngredient } from "../../app/models/RecipeIngredient";
+import {
+  RecipeIngredient,
+  RecipeIngredientFormValues,
+} from "../../app/models/RecipeIngredient";
 import * as Yup from "yup";
 import { Formik } from "formik";
-import { Button, Form } from "semantic-ui-react";
+import { Button, Form, Segment } from "semantic-ui-react";
 import MyNumberInput from "../../app/common/form/MyNumberInput";
 import MyTextInput from "../../app/common/form/MyTextInput";
-import { Recipe } from "../../app/models/recipe";
+import { useStore } from "../../app/stores/store";
+import { useEffect } from "react";
 
-interface Props {
-  recipe: Recipe;
-}
+export default observer(function IngredientForm() {
+  const { recipeStore } = useStore();
+  const [ingredientForm, setIngredientForm] =
+    useState<RecipeIngredientFormValues>(new RecipeIngredientFormValues());
 
-export default observer(function IngredientForm({ recipe }: Props) {
-  // const [ingredient, setIngredient] = useState<RecipeIngredient>({
-  //   ingredientName: "",
-  //   quantity: 0,
-  //   measurement: "",
-  // });
+  const { selectedRecipe, createIngredient, loading } = recipeStore;
+
+  useEffect(() => {
+    setIngredientForm(new RecipeIngredientFormValues());
+  }, [setIngredientForm]);
 
   const validationSchema = Yup.object({
     quantity: Yup.number().required(),
@@ -25,41 +29,48 @@ export default observer(function IngredientForm({ recipe }: Props) {
     measurement: Yup.string().required(),
   });
 
-  function handleFormSubmit(recipe: Recipe) {}
+  function handleFormSubmit(ingredient: RecipeIngredient) {
+    createIngredient(selectedRecipe!.id, ingredient);
+  }
 
   return (
-    <Formik
-      validationSchema={validationSchema}
-      enableReinitialize
-      initialValues={recipe}
-      onSubmit={(values) => handleFormSubmit(values)}
-    >
-      {({ handleSubmit, isValid, isSubmitting, dirty }) => (
-        <Form onSubmit={handleSubmit} autoComplete="off">
-          <Form.Group>
-            <MyNumberInput name="quantity" placeholder="Quantity" />
+    <Segment>
+      <Formik
+        validationSchema={validationSchema}
+        enableReinitialize
+        initialValues={ingredientForm}
+        onSubmit={(values, { resetForm }) => {
+          handleFormSubmit(values);
+          resetForm({});
+        }}
+      >
+        {({ handleSubmit, isValid, isSubmitting, dirty }) => (
+          <Form onSubmit={handleSubmit} autoComplete="off">
+            <Form.Group>
+              <MyNumberInput name="quantity" placeholder="Quantity" />
 
-            <MyTextInput name="measurement" placeholder="Measurement" />
+              <MyTextInput name="measurement" placeholder="Measurement" />
 
-            <Form.Input>
-              <MyTextInput
-                placeholder="Ingredient Name"
-                name="ingredientName"
+              <Form.Input>
+                <MyTextInput
+                  placeholder="Ingredient Name"
+                  name="ingredientName"
+                />
+              </Form.Input>
+
+              <Button
+                disabled={isSubmitting || !dirty || !isValid}
+                loading={loading}
+                floated="right"
+                positive
+                type="submit"
+                content="Add"
+                style={{ marginTop: "1em" }}
               />
-            </Form.Input>
-          </Form.Group>
-
-          <Button
-            disabled={isSubmitting || !dirty || !isValid}
-            // loading={loading}
-            floated="right"
-            positive
-            type="submit"
-            content="Add"
-            style={{ marginTop: "1em" }}
-          />
-        </Form>
-      )}
-    </Formik>
+            </Form.Group>
+          </Form>
+        )}
+      </Formik>
+    </Segment>
   );
 });

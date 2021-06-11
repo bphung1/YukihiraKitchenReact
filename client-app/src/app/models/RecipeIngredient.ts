@@ -3,3 +3,9 @@ export interface RecipeIngredient {
   quantity: number;
   measurement: string;
 }
+
+export class RecipeIngredientFormValues {
+  ingredientName: string = "";
+  quantity: number = 0;
+  measurement: string = "";
+}

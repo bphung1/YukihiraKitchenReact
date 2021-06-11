@@ -7,6 +7,7 @@ export default class RecipeStore {
   recipeRegistry = new Map<string, Recipe>();
   selectedRecipe: Recipe | undefined = undefined;
   ingredients: RecipeIngredient[] | undefined = [];
+  selectedIngredient: RecipeIngredient | undefined = undefined;
   editMode = false;
   loading = false;
   loadingInitial = false;
@@ -90,6 +91,14 @@ export default class RecipeStore {
     }
   };
 
+  loadIngredient = async () => {
+    try {
+      return this.selectedIngredient;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   private setRecipe = (recipe: Recipe) => {
     this.recipeRegistry.set(recipe.id, recipe);
   };
@@ -114,6 +123,22 @@ export default class RecipeStore {
       });
     } catch (error) {
       console.log(error);
+      runInAction(() => {
+        this.loading = false;
+      });
+    }
+  };
+
+  createIngredient = async (id: string, ingredient: RecipeIngredient) => {
+    this.loading = true;
+    try {
+      await agent.Ingredients.create(id, ingredient);
+      runInAction(() => {
+        this.selectedRecipe?.recipeIngredients?.push(ingredient);
+        this.loading = false;
+      });
+    } catch (err) {
+      console.log(err);
       runInAction(() => {
         this.loading = false;
       });
