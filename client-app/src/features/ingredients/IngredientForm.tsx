@@ -12,6 +12,8 @@ import MyTextInput from "../../app/common/form/MyTextInput";
 import { useStore } from "../../app/stores/store";
 import { useEffect } from "react";
 import { IngredientValues } from "../../app/models/ingredient";
+import MySelectInput from "../../app/common/form/MySelectInput";
+import { measurementUnitOptions } from "../../app/common/options/measurementUnitOptions";
 
 export default observer(function IngredientForm() {
   const { recipeStore, ingredientStore } = useStore();
@@ -26,7 +28,11 @@ export default observer(function IngredientForm() {
   }, [setIngredientForm, ingredientStore]);
 
   const validationSchema = Yup.object({
-    quantity: Yup.number().required(),
+    quantity: Yup.number()
+      .integer()
+      .required()
+      .positive()
+      .typeError("Must be a number"),
     ingredientName: Yup.string().required(),
     measurement: Yup.string().required(),
   });
@@ -56,7 +62,11 @@ export default observer(function IngredientForm() {
             <Form.Group>
               <MyNumberInput name="quantity" placeholder="Quantity" />
 
-              <MyTextInput name="measurement" placeholder="Measurement" />
+              <MySelectInput
+                options={measurementUnitOptions}
+                name="measurement"
+                placeholder="Measurement"
+              />
 
               <Form.Input>
                 <MyTextInput
@@ -72,7 +82,6 @@ export default observer(function IngredientForm() {
                 positive
                 type="submit"
                 content="Add"
-                style={{ marginTop: "1em" }}
               />
             </Form.Group>
           </Form>
