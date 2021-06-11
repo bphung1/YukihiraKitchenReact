@@ -65,8 +65,13 @@ export default class RecipeStore {
     }
   };
 
+  setEditMode = (edit: boolean) => {
+    this.editMode = edit;
+  };
+
   loadRecipe = async (id: string) => {
     let recipe = this.getRecipe(id);
+    this.editMode = true;
     if (recipe) {
       this.selectedRecipe = recipe;
       return recipe;
@@ -112,11 +117,12 @@ export default class RecipeStore {
   createRecipe = async (recipe: Recipe) => {
     this.loading = true;
     try {
+      recipe.recipeIngredients = [];
       await agent.Recipes.create(recipe);
       runInAction(() => {
         this.recipeRegistry.set(recipe.id, recipe);
         this.selectedRecipe = recipe;
-        this.editMode = false;
+        this.editMode = true;
         this.loading = false;
       });
     } catch (error) {

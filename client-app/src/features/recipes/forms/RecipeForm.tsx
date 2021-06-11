@@ -21,8 +21,14 @@ interface Props {
 export default observer(function RecipeForm({ id }: Props) {
   const history = useHistory();
   const { recipeStore, modalStore } = useStore();
-  const { createRecipe, updateRecipe, loadRecipe, loadingInitial } =
-    recipeStore;
+  const {
+    createRecipe,
+    updateRecipe,
+    loadRecipe,
+    loadingInitial,
+    editMode,
+    setEditMode,
+  } = recipeStore;
   // const { id } = useParams<{ id: string }>();
 
   const [recipeForm, setRecipeForm] = useState<RecipeFormValues>(
@@ -57,7 +63,8 @@ export default observer(function RecipeForm({ id }: Props) {
         setRecipeForm(new RecipeFormValues(recipe));
         setRecipe(recipe!);
       });
-  }, [id, loadRecipe]);
+    else setEditMode(false);
+  }, [id, loadRecipe, setEditMode]);
 
   function handleFormSubmit(recipe: RecipeFormValues) {
     if (!recipe.id) {
@@ -129,10 +136,12 @@ export default observer(function RecipeForm({ id }: Props) {
             )}
           </Formik>
         </Segment>
-        <Segment clearing>
-          <Header content="Recipe Ingredients" sub color="teal" />
-          <IngredientDashboard />
-        </Segment>
+        {editMode && (
+          <Segment clearing>
+            <Header content="Recipe Ingredients" sub color="teal" />
+            <IngredientDashboard />
+          </Segment>
+        )}
       </Segment.Group>
     </>
   );
