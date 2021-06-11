@@ -83,6 +83,6 @@ body {
 .recipe_ingredient-list {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0rem 3rem;
+  gap: 1rem 3rem;
   list-style: none;
 }

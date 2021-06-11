@@ -8,7 +8,7 @@ interface Props {
   recipe: Recipe;
 }
 
-export default observer(function ActivityDetailedInfo({ recipe }: Props) {
+export default observer(function RecipeDetailedInfo({ recipe }: Props) {
   return (
     <Segment.Group>
       <Segment attached="top">

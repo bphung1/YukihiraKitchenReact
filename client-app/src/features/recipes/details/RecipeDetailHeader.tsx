@@ -5,7 +5,7 @@ import { Recipe } from "../../../app/models/recipe";
 import { useStore } from "../../../app/stores/store";
 import RecipeForm from "../forms/RecipeForm";
 
-const activityImageStyle = {
+const recipeImageStyle = {
   filter: "brightness(30%)",
 };
 
@@ -23,12 +23,18 @@ interface Props {
 }
 
 export default observer(function RecipeDetailHeader({ recipe }: Props) {
-  const { modalStore, userStore } = useStore();
+  const { modalStore, userStore, recipeStore } = useStore();
+
+  function handleDeleteRecipe(id: string) {
+    recipeStore.deleteRecipe(id).then(() => {
+      modalStore.closeModal();
+    });
+  }
 
   return (
     <Segment.Group>
       <Segment basic attached="top" style={{ padding: "0" }}>
-        <Image src={`/assets/food.png`} fluid style={activityImageStyle} />
+        <Image src={`/assets/food.png`} fluid style={recipeImageStyle} />
         <Segment style={recipeImageTextStyle} basic>
           <Item.Group>
             <Item>
@@ -46,7 +52,12 @@ export default observer(function RecipeDetailHeader({ recipe }: Props) {
       {userStore.isLoggedIn ? (
         <>
           <Segment clearing attached="bottom">
-            <Button>Delete recipe</Button>
+            <Button
+              loading={recipeStore.loading}
+              onClick={() => handleDeleteRecipe(recipe.id)}
+            >
+              Delete recipe
+            </Button>
             <Button
               onClick={() =>
                 modalStore.openModal(<RecipeForm id={recipe.id} />)

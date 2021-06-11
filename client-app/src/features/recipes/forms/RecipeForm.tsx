@@ -10,8 +10,9 @@ import * as Yup from "yup";
 import MyTextInput from "../../../app/common/form/MyTextInput";
 import MyNumberInput from "../../../app/common/form/MyNumberInput";
 import MyTextArea from "../../../app/common/form/MyTextArea";
-import { Recipe } from "../../../app/models/recipe";
+import { Recipe, RecipeFormValues } from "../../../app/models/recipe";
 import RecipeDetails from "../details/RecipeDetails";
+import IngredientDashboard from "../../ingredients/IngredientDashboard";
 
 interface Props {
   id: string;
@@ -20,10 +21,13 @@ interface Props {
 export default observer(function RecipeForm({ id }: Props) {
   const history = useHistory();
   const { recipeStore, modalStore } = useStore();
-  const { createRecipe, updateRecipe, loading, loadRecipe, loadingInitial } =
+  const { createRecipe, updateRecipe, loadRecipe, loadingInitial } =
     recipeStore;
   // const { id } = useParams<{ id: string }>();
 
+  const [recipeForm, setRecipeForm] = useState<RecipeFormValues>(
+    new RecipeFormValues()
+  );
   const [recipe, setRecipe] = useState<Recipe>({
     id: "",
     recipeName: "",
@@ -48,11 +52,15 @@ export default observer(function RecipeForm({ id }: Props) {
   });
 
   useEffect(() => {
-    if (id) loadRecipe(id).then((recipe) => setRecipe(recipe!));
+    if (id)
+      loadRecipe(id).then((recipe) => {
+        setRecipeForm(new RecipeFormValues(recipe));
+        setRecipe(recipe!);
+      });
   }, [id, loadRecipe]);
 
-  function handleFormSubmit(recipe: Recipe) {
-    if (recipe.id.length === 0) {
+  function handleFormSubmit(recipe: RecipeFormValues) {
+    if (!recipe.id) {
       let newRecipe = {
         ...recipe,
         id: uuid(),
@@ -70,47 +78,62 @@ export default observer(function RecipeForm({ id }: Props) {
   if (loadingInitial) return <LoadingComponent />;
 
   return (
-    <Segment clearing>
-      <Header content="Recipe Details" sub color="teal" />
-      <Formik
-        validationSchema={validationSchema}
-        enableReinitialize
-        initialValues={recipe}
-        onSubmit={(values) => handleFormSubmit(values)}
-      >
-        {({ handleSubmit, isValid, isSubmitting, dirty }) => (
-          <Form className="ui form" onSubmit={handleSubmit} autoComplete="off">
-            <MyTextInput name="recipeName" placeholder="Recipe name" />
+    <>
+      <Segment.Group>
+        <Segment clearing>
+          <Header content="Recipe Details" sub color="teal" />
+          <Formik
+            validationSchema={validationSchema}
+            enableReinitialize
+            initialValues={recipeForm}
+            onSubmit={(values) => handleFormSubmit(values)}
+          >
+            {({ handleSubmit, isValid, isSubmitting, dirty }) => (
+              <Form
+                className="ui form"
+                onSubmit={handleSubmit}
+                autoComplete="off"
+              >
+                <MyTextInput name="recipeName" placeholder="Recipe name" />
 
-            <MyTextArea rows={3} placeholder="Description" name="description" />
+                <MyTextArea
+                  rows={3}
+                  placeholder="Description"
+                  name="description"
+                />
 
-            <MyNumberInput
-              placeholder="Cooking Duration"
-              name="cookingDuration"
-            />
+                <MyNumberInput
+                  placeholder="Cooking Duration"
+                  name="cookingDuration"
+                />
 
-            <MyNumberInput placeholder="Temperature" name="temperature" />
+                <MyNumberInput placeholder="Temperature" name="temperature" />
 
-            <Header content="Recipe Ingredients" sub color="teal" />
-            <Header content="Recipe Directions" sub color="teal" />
+                <Header content="Recipe Directions" sub color="teal" />
 
-            <Button
-              disabled={isSubmitting || !dirty || !isValid}
-              loading={loading}
-              floated="right"
-              positive
-              type="submit"
-              content="Submit"
-            />
-            <Button
-              floated="right"
-              type="button"
-              content="Cancel"
-              onClick={openModal}
-            />
-          </Form>
-        )}
-      </Formik>
-    </Segment>
+                <Button
+                  disabled={isSubmitting || !dirty || !isValid}
+                  loading={isSubmitting}
+                  floated="right"
+                  positive
+                  type="submit"
+                  content="Submit"
+                />
+                <Button
+                  floated="right"
+                  type="button"
+                  content="Cancel"
+                  onClick={openModal}
+                />
+              </Form>
+            )}
+          </Formik>
+        </Segment>
+        <Segment clearing>
+          <Header content="Recipe Ingredients" sub color="teal" />
+          <IngredientDashboard recipe={recipe} />
+        </Segment>
+      </Segment.Group>
+    </>
   );
 });

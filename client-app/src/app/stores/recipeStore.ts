@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
-import { Recipe } from "../models/recipe";
+import { Recipe, RecipeFormValues } from "../models/recipe";
 
 export default class RecipeStore {
   recipeRegistry = new Map<string, Recipe>();
@@ -117,21 +117,18 @@ export default class RecipeStore {
     }
   };
 
-  updateRecipe = async (recipe: Recipe) => {
-    this.loading = true;
+  updateRecipe = async (recipe: RecipeFormValues) => {
     try {
       await agent.Recipes.update(recipe);
       runInAction(() => {
-        this.recipeRegistry.set(recipe.id, recipe);
-        this.selectedRecipe = recipe;
-        this.editMode = false;
-        this.loading = false;
+        if (recipe.id) {
+          let updatedActivity = { ...this.getRecipe(recipe.id), ...recipe };
+          this.recipeRegistry.set(recipe.id, updatedActivity as Recipe);
+          this.selectedRecipe = updatedActivity as Recipe;
+        }
       });
     } catch (error) {
       console.log(error);
-      runInAction(() => {
-        this.loading = false;
-      });
     }
   };
 

@@ -1,7 +1,8 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import { history } from "../..";
-import { Recipe } from "../models/recipe";
+import { Recipe, RecipeFormValues } from "../models/recipe";
+import { RecipeIngredient } from "../models/RecipeIngredient";
 import { User, UserFormValues } from "../models/user";
 import { store } from "../stores/store";
 
@@ -78,9 +79,16 @@ const Recipes = {
   list: () => requests.get<Recipe[]>("/Recipes"),
   details: (id: string) => requests.get<Recipe>(`/Recipes/${id}`),
   create: (recipe: Recipe) => requests.post<void>("/Recipes", recipe),
-  update: (recipe: Recipe) =>
+  update: (recipe: RecipeFormValues) =>
     requests.put<void>(`/Recipes/${recipe.id}`, recipe),
   delete: (id: string) => requests.del<void>(`/Recipes/${id}`),
+};
+
+const Ingredients = {
+  create: (id: string, ingredient: RecipeIngredient) =>
+    requests.post<void>(`/Recipes/${id}/addRecipeIngredient`, ingredient),
+  delete: (id: string, ingredientName: string) =>
+    requests.del<void>(`/Recipes/${id}/removeIngredient/${ingredientName}`),
 };
 
 const Account = {
@@ -91,6 +99,7 @@ const Account = {
 const agent = {
   Recipes,
   Account,
+  Ingredients,
 };
 
 export default agent;
