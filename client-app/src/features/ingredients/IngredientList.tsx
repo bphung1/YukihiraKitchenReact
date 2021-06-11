@@ -1,26 +1,24 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { Item } from "semantic-ui-react";
-import { Recipe } from "../../app/models/recipe";
+import { useStore } from "../../app/stores/store";
 import IngredientForm from "./IngredientForm";
 import IngredientListItem from "./IngredientListItem";
 
-interface Props {
-  recipe: Recipe;
-}
-
-export default observer(function IngredientList({ recipe }: Props) {
+export default observer(function IngredientList() {
+  const { recipeStore } = useStore();
+  const { selectedRecipe } = recipeStore;
   return (
     <>
-      {recipe.recipeIngredients?.map((ingredient) => (
+      {selectedRecipe!.recipeIngredients?.map((ingredient) => (
         <IngredientListItem
           key={ingredient.ingredientName}
           ingredient={ingredient}
-          recipe={recipe}
+          id={selectedRecipe!.id}
         />
       ))}
       <Item>
-        <IngredientForm recipe={recipe} />
+        <IngredientForm recipe={selectedRecipe!} />
       </Item>
     </>
   );

@@ -1,10 +1,12 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
 import { Recipe, RecipeFormValues } from "../models/recipe";
+import { RecipeIngredient } from "../models/RecipeIngredient";
 
 export default class RecipeStore {
   recipeRegistry = new Map<string, Recipe>();
   selectedRecipe: Recipe | undefined = undefined;
+  ingredients: RecipeIngredient[] | undefined = [];
   editMode = false;
   loading = false;
   loadingInitial = false;
@@ -75,6 +77,7 @@ export default class RecipeStore {
         this.setRecipe(recipe);
         runInAction(() => {
           this.selectedRecipe = recipe;
+          this.ingredients = recipe?.recipeIngredients;
           this.setLoadingInitial(false);
         });
         return recipe;
@@ -142,6 +145,27 @@ export default class RecipeStore {
       });
     } catch (error) {
       console.log(error);
+      runInAction(() => {
+        this.loading = false;
+      });
+    }
+  };
+
+  deleteIngredient = async (id: string, ingredientName: string) => {
+    this.loading = true;
+    try {
+      await agent.Ingredients.delete(id, ingredientName);
+      runInAction(() => {
+        if (this.selectedRecipe) {
+          this.selectedRecipe.recipeIngredients =
+            this.selectedRecipe.recipeIngredients?.filter(
+              (i) => i.ingredientName !== ingredientName
+            );
+        }
+        this.loading = false;
+      });
+    } catch (err) {
+      console.log(err);
       runInAction(() => {
         this.loading = false;
       });

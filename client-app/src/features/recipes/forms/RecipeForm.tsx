@@ -28,7 +28,7 @@ export default observer(function RecipeForm({ id }: Props) {
   const [recipeForm, setRecipeForm] = useState<RecipeFormValues>(
     new RecipeFormValues()
   );
-  const [recipe, setRecipe] = useState<Recipe>({
+  const [, setRecipe] = useState<Recipe>({
     id: "",
     recipeName: "",
     description: "",
@@ -131,7 +131,7 @@ export default observer(function RecipeForm({ id }: Props) {
         </Segment>
         <Segment clearing>
           <Header content="Recipe Ingredients" sub color="teal" />
-          <IngredientDashboard recipe={recipe} />
+          <IngredientDashboard />
         </Segment>
       </Segment.Group>
     </>

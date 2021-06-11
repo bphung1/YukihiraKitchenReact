@@ -24,7 +24,7 @@ export default class IngredientStore {
     }
   };
 
-  deleteRecipe = async (id: string, ingredientName: string) => {
+  deleteIngredient = async (id: string, ingredientName: string) => {
     this.loading = true;
     try {
       await agent.Ingredients.delete(id, ingredientName);
