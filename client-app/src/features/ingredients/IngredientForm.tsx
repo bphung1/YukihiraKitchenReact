@@ -11,17 +11,19 @@ import MyNumberInput from "../../app/common/form/MyNumberInput";
 import MyTextInput from "../../app/common/form/MyTextInput";
 import { useStore } from "../../app/stores/store";
 import { useEffect } from "react";
+import { IngredientValues } from "../../app/models/ingredient";
 
 export default observer(function IngredientForm() {
-  const { recipeStore } = useStore();
+  const { recipeStore, ingredientStore } = useStore();
   const [ingredientForm, setIngredientForm] =
     useState<RecipeIngredientFormValues>(new RecipeIngredientFormValues());
 
-  const { selectedRecipe, createIngredient, loading } = recipeStore;
+  const { createIngredient, ingredients } = ingredientStore;
+  const { selectedRecipe, createRecipeIngredient, loading } = recipeStore;
 
   useEffect(() => {
     setIngredientForm(new RecipeIngredientFormValues());
-  }, [setIngredientForm]);
+  }, [setIngredientForm, ingredientStore]);
 
   const validationSchema = Yup.object({
     quantity: Yup.number().required(),
@@ -30,7 +32,12 @@ export default observer(function IngredientForm() {
   });
 
   function handleFormSubmit(ingredient: RecipeIngredient) {
-    createIngredient(selectedRecipe!.id, ingredient);
+    if (!ingredients?.includes(ingredient.ingredientName)) {
+      const ing = new IngredientValues(ingredient.ingredientName);
+      createIngredient(ing);
+    }
+
+    createRecipeIngredient(selectedRecipe!.id, ingredient);
   }
 
   return (

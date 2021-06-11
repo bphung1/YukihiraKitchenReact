@@ -6,7 +6,6 @@ import { RecipeIngredient } from "../models/RecipeIngredient";
 export default class RecipeStore {
   recipeRegistry = new Map<string, Recipe>();
   selectedRecipe: Recipe | undefined = undefined;
-  ingredients: RecipeIngredient[] | undefined = [];
   selectedIngredient: RecipeIngredient | undefined = undefined;
   editMode = false;
   loading = false;
@@ -78,7 +77,6 @@ export default class RecipeStore {
         this.setRecipe(recipe);
         runInAction(() => {
           this.selectedRecipe = recipe;
-          this.ingredients = recipe?.recipeIngredients;
           this.setLoadingInitial(false);
         });
         return recipe;
@@ -129,10 +127,13 @@ export default class RecipeStore {
     }
   };
 
-  createIngredient = async (id: string, ingredient: RecipeIngredient) => {
+  createRecipeIngredient = async (id: string, ingredient: RecipeIngredient) => {
     this.loading = true;
+    ingredient.ingredientName = this.capitalizeFirstLetter(
+      ingredient.ingredientName
+    );
     try {
-      await agent.Ingredients.create(id, ingredient);
+      await agent.RecipeIngredients.create(id, ingredient);
       runInAction(() => {
         this.selectedRecipe?.recipeIngredients?.push(ingredient);
         this.loading = false;
@@ -144,6 +145,11 @@ export default class RecipeStore {
       });
     }
   };
+
+  private capitalizeFirstLetter(name: string) {
+    name = name[0].toUpperCase() + name.substring(1);
+    return name;
+  }
 
   updateRecipe = async (recipe: RecipeFormValues) => {
     try {
@@ -179,7 +185,7 @@ export default class RecipeStore {
   deleteIngredient = async (id: string, ingredientName: string) => {
     this.loading = true;
     try {
-      await agent.Ingredients.delete(id, ingredientName);
+      await agent.RecipeIngredients.delete(id, ingredientName);
       runInAction(() => {
         if (this.selectedRecipe) {
           this.selectedRecipe.recipeIngredients =

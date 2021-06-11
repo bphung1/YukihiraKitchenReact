@@ -8,12 +8,14 @@ import RecipeFilter from "./RecipeFilter";
 import RecipeList from "./RecipeList";
 
 export default observer(function RecipeDashboard() {
-  const { recipeStore } = useStore();
+  const { recipeStore, ingredientStore } = useStore();
   const { loadRecipes, recipeRegistry } = recipeStore;
+  const { loadIngredients } = ingredientStore;
 
   useEffect(() => {
     if (recipeRegistry.size <= 1) loadRecipes();
-  }, [loadRecipes, recipeRegistry]);
+    loadIngredients();
+  }, [loadRecipes, recipeRegistry, loadIngredients]);
 
   if (recipeStore.loadingInitial) return <LoadingComponent />;
 
