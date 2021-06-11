@@ -126,12 +126,22 @@ export default observer(function RecipeForm({ id }: Props) {
                   type="submit"
                   content="Submit"
                 />
-                <Button
-                  floated="right"
-                  type="button"
-                  content="Cancel"
-                  onClick={openModal}
-                />
+                {editMode && (
+                  <Button
+                    floated="right"
+                    type="button"
+                    content="Back"
+                    onClick={openModal}
+                  />
+                )}
+                {!editMode && (
+                  <Button
+                    floated="right"
+                    type="button"
+                    content="Cancel"
+                    onClick={() => history.push("/recipes")}
+                  />
+                )}
               </Form>
             )}
           </Formik>
