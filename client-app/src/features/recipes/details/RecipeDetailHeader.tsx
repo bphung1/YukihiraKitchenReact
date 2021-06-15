@@ -1,12 +1,16 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { Button, Header, Item, Segment, Image } from "semantic-ui-react";
+import PhotoUploadWidget from "../../../app/common/imageUpload/PhotoUploadWidget";
 import { Recipe } from "../../../app/models/recipe";
 import { useStore } from "../../../app/stores/store";
 import RecipeForm from "../forms/RecipeForm";
 
 const recipeImageStyle = {
   filter: "brightness(30%)",
+  height: "400px",
+  marginLeft: "auto",
+  marginRight: "auto",
 };
 
 const recipeImageTextStyle = {
@@ -34,7 +38,11 @@ export default observer(function RecipeDetailHeader({ recipe }: Props) {
   return (
     <Segment.Group>
       <Segment basic attached="top" style={{ padding: "0" }}>
-        <Image src={`/assets/food.png`} fluid style={recipeImageStyle} />
+        <Image
+          src={recipe.photo || `/assets/food.png`}
+          fluid
+          style={recipeImageStyle}
+        />
         <Segment style={recipeImageTextStyle} basic>
           <Item.Group>
             <Item>
@@ -67,6 +75,12 @@ export default observer(function RecipeDetailHeader({ recipe }: Props) {
             >
               Manage recipe
             </Button>
+            <Button
+              onClick={() => modalStore.openModal(<PhotoUploadWidget />)}
+              color="orange"
+              floated="right"
+              content={recipe.photo ? "Change Photo" : "Upload"}
+            ></Button>
           </Segment>
         </>
       ) : (

@@ -7,6 +7,12 @@ export interface Recipe {
   cookingDuration: number;
   temperature: number;
   recipeIngredients?: RecipeIngredient[];
+  photo?: string;
+}
+
+export interface Photo {
+  id: string;
+  url: string;
 }
 
 export class RecipeFormValues {

@@ -18,7 +18,11 @@ export default observer(function RecipeListItem({ recipe }: Props) {
       <Segment>
         <Item.Group>
           <Item>
-            <Item.Image size="tiny" circular src={"/assets/food.png"} />
+            <Item.Image
+              size="tiny"
+              circular
+              src={recipe.photo || "/assets/food.png"}
+            />
             <Item.Content>
               <Item.Header as={Link} to={`/recipes/${recipe.id}`}>
                 {recipe.recipeName}

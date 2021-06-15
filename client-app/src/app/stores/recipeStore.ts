@@ -10,6 +10,7 @@ export default class RecipeStore {
   editMode = false;
   loading = false;
   loadingInitial = false;
+  uploading = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -206,6 +207,56 @@ export default class RecipeStore {
       runInAction(() => {
         this.loading = false;
       });
+    }
+  };
+
+  uploadPhoto = async (file: Blob, id: string) => {
+    this.uploading = true;
+    try {
+      const response = await agent.Recipes.uploadPhoto(file, id);
+      const photo = response.data;
+      runInAction(() => {
+        if (this.selectedRecipe) {
+          this.selectedRecipe.photo = photo.url;
+          this.uploading = false;
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      runInAction(() => (this.uploading = false));
+    }
+  };
+
+  replacePhoto = async (file: Blob, id: string) => {
+    this.uploading = true;
+    try {
+      const response = await agent.Recipes.replacePhoto(file, id);
+      const photo = response.data;
+      runInAction(() => {
+        if (this.selectedRecipe) {
+          this.selectedRecipe.photo = photo.url;
+          this.uploading = false;
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      runInAction(() => (this.uploading = false));
+    }
+  };
+
+  deletePhoto = async (id: string) => {
+    this.uploading = true;
+    try {
+      await agent.Recipes.deletePhoto(id);
+      runInAction(() => {
+        if (this.selectedRecipe) {
+          this.selectedRecipe.photo = undefined;
+          this.uploading = false;
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      runInAction(() => (this.uploading = false));
     }
   };
 }

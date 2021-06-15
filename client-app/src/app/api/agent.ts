@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import { history } from "../..";
 import { Ingredient, IngredientValues } from "../models/ingredient";
-import { Recipe, RecipeFormValues } from "../models/recipe";
+import { Photo, Recipe, RecipeFormValues } from "../models/recipe";
 import { RecipeIngredient } from "../models/RecipeIngredient";
 import { User, UserFormValues } from "../models/user";
 import { store } from "../stores/store";
@@ -83,6 +83,21 @@ const Recipes = {
   update: (recipe: RecipeFormValues) =>
     requests.put<void>(`/Recipes/${recipe.id}`, recipe),
   delete: (id: string) => requests.del<void>(`/Recipes/${id}`),
+  uploadPhoto: (file: Blob, id: string) => {
+    let formData = new FormData();
+    formData.append("File", file);
+    return axios.post<Photo>(`/photos/${id}`, formData, {
+      headers: { "Content-type": "multipart/form-data" },
+    });
+  },
+  deletePhoto: (id: string) => requests.del(`/photos/${id}`),
+  replacePhoto: (file: Blob, id: string) => {
+    let formData = new FormData();
+    formData.append("File", file);
+    return axios.put<Photo>(`/photos/${id}`, formData, {
+      headers: { "Content-type": "multipart/form-data" },
+    });
+  },
 };
 
 const RecipeIngredients = {
