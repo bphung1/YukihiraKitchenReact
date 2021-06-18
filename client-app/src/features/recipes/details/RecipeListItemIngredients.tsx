@@ -1,18 +1,13 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { Icon, List } from "semantic-ui-react";
-import { RecipeIngredient } from "../../../app/models/RecipeIngredient";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-  ingredients: RecipeIngredient[];
-}
-
-export default observer(function RecipeListItemIngredients({
-  ingredients,
-}: Props) {
+export default observer(function RecipeListItemIngredients() {
+  const { recipeStore } = useStore();
   return (
     <List className="recipe_ingredient-list">
-      {ingredients.map((ingredient) => (
+      {recipeStore.selectedRecipe?.recipeIngredients?.map((ingredient) => (
         <List.Item key={ingredient.ingredientName}>
           <Icon name="checkmark" style={{ marginRight: "1em" }} />
           {ingredient.quantity +

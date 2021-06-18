@@ -13,6 +13,7 @@ import MyTextArea from "../../../app/common/form/MyTextArea";
 import { Recipe, RecipeFormValues } from "../../../app/models/recipe";
 import RecipeDetails from "../details/RecipeDetails";
 import IngredientDashboard from "../../ingredients/IngredientDashboard";
+import DirectionDashboard from "../../directions/DirectionDashboard";
 
 interface Props {
   id: string;
@@ -152,6 +153,7 @@ export default observer(function RecipeForm({ id }: Props) {
             </Segment>
             <Segment clearing>
               <Header content="Recipe Directions" sub color="teal" />
+              <DirectionDashboard />
             </Segment>
           </>
         )}

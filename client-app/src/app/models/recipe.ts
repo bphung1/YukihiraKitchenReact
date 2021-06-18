@@ -1,3 +1,4 @@
+import { Direction } from "./direction";
 import { RecipeIngredient } from "./RecipeIngredient";
 
 export interface Recipe {
@@ -7,6 +8,7 @@ export interface Recipe {
   cookingDuration: number;
   temperature: number;
   recipeIngredients?: RecipeIngredient[];
+  directions?: Direction[];
   photo?: string;
 }
 

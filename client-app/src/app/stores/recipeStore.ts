@@ -11,6 +11,7 @@ export default class RecipeStore {
   loading = false;
   loadingInitial = false;
   uploading = false;
+  directionLoading = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -23,34 +24,6 @@ export default class RecipeStore {
       return 0;
     });
   }
-
-  // get groupedRecipes() {
-  //   return Object.entries(
-  //     this.recipesByName.reduce((recipes, recipe) => {
-  //       const name = recipe.recipeName;
-  //       const firstLetter = name.charAt(0);
-
-  //       recipes[name] = recipes[name] ? [...recipes[name], recipe] : [recipe];
-
-  //       return recipes;
-  //     }, {} as { [key: string]: Recipe[] })
-  //   );
-  // }
-
-  //implement once cetegory is included
-  // get groupedRecipes() {
-  //   return Object.entries(
-  //     this.recipesByName.reduce((recipes, recipe) => {
-  //       const category = recipe.category;
-
-  //       recipes[category] = recipes[category]
-  //         ? [...recipes[category], recipe]
-  //         : [recipe];
-
-  //       return recipes;
-  //     }, {} as { [key: string]: Recipe[] })
-  //   );
-  // }
 
   loadRecipes = async () => {
     this.setLoadingInitial(true);
@@ -75,6 +48,9 @@ export default class RecipeStore {
     this.editMode = true;
     if (recipe) {
       this.selectedRecipe = recipe;
+      if (this.selectedRecipe.directions) {
+        this.selectedRecipe.directions = this.sortDirections;
+      }
       return recipe;
     } else {
       this.loadingInitial = true;
@@ -83,6 +59,9 @@ export default class RecipeStore {
         this.setRecipe(recipe);
         runInAction(() => {
           this.selectedRecipe = recipe;
+          if (this.selectedRecipe!.directions) {
+            this.selectedRecipe!.directions = this.sortDirections;
+          }
           this.setLoadingInitial(false);
         });
         return recipe;
@@ -95,13 +74,15 @@ export default class RecipeStore {
     }
   };
 
-  loadIngredient = async () => {
-    try {
-      return this.selectedIngredient;
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  get sortDirections() {
+    return Array.from(this.selectedRecipe!.directions!.values()).sort(
+      (a, b) => {
+        if (a.cookingStepNumber < b.cookingStepNumber) return -1;
+        if (a.cookingStepNumber > b.cookingStepNumber) return 1;
+        return 0;
+      }
+    );
+  }
 
   private setRecipe = (recipe: Recipe) => {
     this.recipeRegistry.set(recipe.id, recipe);
@@ -124,6 +105,37 @@ export default class RecipeStore {
         this.recipeRegistry.set(recipe.id, recipe);
         this.selectedRecipe = recipe;
         this.editMode = true;
+        this.loading = false;
+      });
+    } catch (error) {
+      console.log(error);
+      runInAction(() => {
+        this.loading = false;
+      });
+    }
+  };
+
+  updateRecipe = async (recipe: RecipeFormValues) => {
+    try {
+      await agent.Recipes.update(recipe);
+      runInAction(() => {
+        if (recipe.id) {
+          let updatedActivity = { ...this.getRecipe(recipe.id), ...recipe };
+          this.recipeRegistry.set(recipe.id, updatedActivity as Recipe);
+          this.selectedRecipe = updatedActivity as Recipe;
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  deleteRecipe = async (id: string) => {
+    this.loading = true;
+    try {
+      await agent.Recipes.delete(id);
+      runInAction(() => {
+        this.recipeRegistry.delete(id);
         this.loading = false;
       });
     } catch (error) {
@@ -158,37 +170,6 @@ export default class RecipeStore {
     return name;
   }
 
-  updateRecipe = async (recipe: RecipeFormValues) => {
-    try {
-      await agent.Recipes.update(recipe);
-      runInAction(() => {
-        if (recipe.id) {
-          let updatedActivity = { ...this.getRecipe(recipe.id), ...recipe };
-          this.recipeRegistry.set(recipe.id, updatedActivity as Recipe);
-          this.selectedRecipe = updatedActivity as Recipe;
-        }
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  deleteRecipe = async (id: string) => {
-    this.loading = true;
-    try {
-      await agent.Recipes.delete(id);
-      runInAction(() => {
-        this.recipeRegistry.delete(id);
-        this.loading = false;
-      });
-    } catch (error) {
-      console.log(error);
-      runInAction(() => {
-        this.loading = false;
-      });
-    }
-  };
-
   deleteIngredient = async (id: string, ingredientName: string) => {
     this.loading = true;
     try {
@@ -207,6 +188,23 @@ export default class RecipeStore {
       runInAction(() => {
         this.loading = false;
       });
+    }
+  };
+
+  deleteDirection = async (id: string) => {
+    this.directionLoading = true;
+    try {
+      await agent.Directions.delete(id);
+      runInAction(() => {
+        if (this.selectedRecipe) {
+          this.selectedRecipe.directions =
+            this.selectedRecipe.directions?.filter((d) => d.directionId !== id);
+        }
+        this.directionLoading = false;
+      });
+    } catch (err) {
+      console.log(err);
+      runInAction(() => (this.directionLoading = false));
     }
   };
 

@@ -25,7 +25,7 @@ export default observer(function IngredientList({ ingredient, id }: Props) {
   return (
     <>
       <Segment clearing>
-        <Item key={ingredient.ingredientName} style={{ textAlign: "middle" }}>
+        <Item key={ingredient.ingredientName}>
           {ingredient.quantity +
             " " +
             ingredient.measurement +

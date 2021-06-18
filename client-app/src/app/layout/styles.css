@@ -86,3 +86,7 @@ body {
   gap: 1rem 3rem;
   list-style: none;
 }
+
+.recipe_direction-list {
+  margin-bottom: 15px;
+}

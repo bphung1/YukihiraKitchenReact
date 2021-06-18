@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import { history } from "../..";
+import { DirectionFormValues } from "../models/direction";
 import { Ingredient, IngredientValues } from "../models/ingredient";
 import { Photo, Recipe, RecipeFormValues } from "../models/recipe";
 import { RecipeIngredient } from "../models/RecipeIngredient";
@@ -100,6 +101,12 @@ const Recipes = {
   },
 };
 
+const Directions = {
+  create: (id: string, direction: DirectionFormValues) =>
+    requests.post<void>(`/directions/${id}`, direction),
+  delete: (id: string) => requests.del<void>(`/directions/${id}`),
+};
+
 const RecipeIngredients = {
   create: (id: string, ingredient: RecipeIngredient) =>
     requests.post<void>(`/Recipes/${id}/addRecipeIngredient`, ingredient),
@@ -123,6 +130,7 @@ const agent = {
   Account,
   RecipeIngredients,
   Ingredients,
+  Directions,
 };
 
 export default agent;
