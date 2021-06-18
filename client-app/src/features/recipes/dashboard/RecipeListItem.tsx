@@ -13,6 +13,12 @@ interface Props {
 export default observer(function RecipeListItem({ recipe }: Props) {
   const { modalStore } = useStore();
 
+  function truncate(str: string | undefined) {
+    if (str) {
+      return str?.length > 50 ? str?.substring(0, 47) + "..." : str;
+    }
+  }
+
   return (
     <Segment.Group>
       <Segment>
@@ -35,7 +41,7 @@ export default observer(function RecipeListItem({ recipe }: Props) {
       <Segment clearing>
         <span>
           <Icon name="food" />
-          {recipe.description}
+          {truncate(recipe.description)}
         </span>
         <Button
           onClick={() => modalStore.openModal(<RecipeDetails id={recipe.id} />)}

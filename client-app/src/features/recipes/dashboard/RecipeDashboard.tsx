@@ -4,7 +4,7 @@ import { Grid, Rail } from "semantic-ui-react";
 import Background from "../../../app/layout/Background";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { useStore } from "../../../app/stores/store";
-import RecipeFilter from "./RecipeFilter";
+// import RecipeFilter from "./RecipeFilter";
 import RecipeList from "./RecipeList";
 
 export default observer(function RecipeDashboard() {
@@ -25,7 +25,7 @@ export default observer(function RecipeDashboard() {
         <Grid.Column width="8">
           <RecipeList />
           <Rail position="right">
-            <RecipeFilter />
+            {/* <RecipeFilter /> */}
             <Background />
           </Rail>
         </Grid.Column>

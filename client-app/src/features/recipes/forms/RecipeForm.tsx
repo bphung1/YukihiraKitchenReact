@@ -116,8 +116,6 @@ export default observer(function RecipeForm({ id }: Props) {
 
                 <MyNumberInput placeholder="Temperature" name="temperature" />
 
-                <Header content="Recipe Directions" sub color="teal" />
-
                 <Button
                   disabled={isSubmitting || !dirty || !isValid}
                   loading={isSubmitting}
@@ -147,10 +145,15 @@ export default observer(function RecipeForm({ id }: Props) {
           </Formik>
         </Segment>
         {editMode && (
-          <Segment clearing>
-            <Header content="Recipe Ingredients" sub color="teal" />
-            <IngredientDashboard />
-          </Segment>
+          <>
+            <Segment clearing>
+              <Header content="Recipe Ingredients" sub color="teal" />
+              <IngredientDashboard />
+            </Segment>
+            <Segment clearing>
+              <Header content="Recipe Directions" sub color="teal" />
+            </Segment>
+          </>
         )}
       </Segment.Group>
     </>

@@ -14,6 +14,7 @@ export default function PhotoUploadWidget() {
   const { recipeStore, modalStore } = useStore();
   const { selectedRecipe, uploadPhoto, deletePhoto, replacePhoto } =
     recipeStore;
+  const [uploading, setupLoading] = useState(false);
   const [loading, setLoading] = useState(false);
 
   function handleDeletePhoto() {
@@ -29,20 +30,22 @@ export default function PhotoUploadWidget() {
 
   function handleUploadPhoto(file: Blob) {
     if (selectedRecipe?.photo) {
-      setLoading(true);
+      setupLoading(true);
       replacePhoto(file, selectedRecipe!.id)
-        .then(() => setLoading(false))
+        .then(() => setupLoading(false))
         .then(() =>
           modalStore.openModal(<RecipeDetails id={selectedRecipe!.id} />)
         );
     } else {
-      setLoading(true);
+      setupLoading(true);
       uploadPhoto(file, selectedRecipe!.id)
-        .then(() => setLoading(false))
-        .then(() =>
-          modalStore.openModal(<RecipeDetails id={selectedRecipe!.id} />)
-        );
+        .then(() => setupLoading(false))
+        .then(() => backToRecipeDetail());
     }
+  }
+
+  function backToRecipeDetail() {
+    modalStore.openModal(<RecipeDetails id={selectedRecipe!.id} />);
   }
 
   function onCrop() {
@@ -59,6 +62,12 @@ export default function PhotoUploadWidget() {
 
   return (
     <>
+      <Button
+        onClick={() => backToRecipeDetail()}
+        content="Back"
+        color="grey"
+      />
+
       <Header content="Upload Image" icon="photo" />
       <Grid>
         <Grid.Column width={3}>
@@ -101,13 +110,13 @@ export default function PhotoUploadWidget() {
               />
               <Button.Group widths={2}>
                 <Button
-                  loading={loading}
+                  loading={uploading}
                   onClick={onCrop}
                   positive
                   icon="check"
                 />
                 <Button
-                  disabled={loading}
+                  disabled={uploading}
                   onClick={() => setFiles([])}
                   icon="close"
                 />
