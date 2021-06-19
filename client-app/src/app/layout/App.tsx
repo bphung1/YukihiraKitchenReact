@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Container } from "semantic-ui-react";
 import NavBar from "./NavBar";
+import PrivateRoute from "./PrivateRoute";
 import RecipeDashboard from "../../features/recipes/dashboard/RecipeDashboard";
 import { observer } from "mobx-react-lite";
 import { Route, Switch, useLocation } from "react-router";
@@ -9,7 +10,6 @@ import RecipeForm from "../../features/recipes/forms/RecipeForm";
 import RecipeDetails from "../../features/recipes/details/RecipeDetails";
 import { ToastContainer } from "react-toastify";
 import NotFound from "../../features/errors/NotFound";
-import LoginForm from "../../features/users/LoginForm";
 import { useStore } from "../stores/store";
 import LoadingComponent from "./LoadingComponent";
 import ModalContainer from "../common/modals/ModalContainer";
@@ -43,12 +43,11 @@ function App() {
               <Switch>
                 <Route exact path="/recipes" component={RecipeDashboard} />
                 <Route path="/recipes/:id" component={RecipeDetails} />
-                <Route
+                <PrivateRoute
                   key={location.key}
                   path={["/createRecipe", "/manage/:id"]}
                   component={RecipeForm}
                 />
-                <Route path="/login" component={LoginForm} />
                 <Route component={NotFound} />
               </Switch>
             </Container>

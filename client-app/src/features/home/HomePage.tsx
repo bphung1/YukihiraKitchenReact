@@ -6,7 +6,7 @@ import { useStore } from "../../app/stores/store";
 import LoginForm from "../users/LoginForm";
 
 export default observer(function HomePage() {
-  const { modalStore } = useStore();
+  const { modalStore, userStore } = useStore();
 
   return (
     <Segment inverted textAlign="center" vertical className="masthead">
@@ -24,13 +24,16 @@ export default observer(function HomePage() {
         <Button as={Link} to="/recipes" size="huge" inverted>
           Take me to Yukihira's Kitchen!
         </Button>
-        <Button
-          onClick={() => modalStore.openModal(<LoginForm />)}
-          size="huge"
-          inverted
-        >
-          Login
-        </Button>
+
+        {!userStore.isLoggedIn && (
+          <Button
+            onClick={() => modalStore.openModal(<LoginForm />)}
+            size="huge"
+            inverted
+          >
+            Login
+          </Button>
+        )}
       </Container>
     </Segment>
   );
