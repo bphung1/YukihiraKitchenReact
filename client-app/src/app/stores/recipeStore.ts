@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
 import { Direction } from "../models/direction";
+import { Pagination, PagingParams } from "../models/pagination";
 import { Recipe, RecipeFormValues } from "../models/recipe";
 import { RecipeIngredient } from "../models/RecipeIngredient";
 
@@ -14,10 +15,23 @@ export default class RecipeStore {
   uploading = false;
   directionLoading = false;
   directionFormLoading = false;
+  pagination: Pagination | null = null;
+  pagingParams = new PagingParams();
 
   constructor() {
     makeAutoObservable(this);
   }
+
+  get axiosParams() {
+    const params = new URLSearchParams();
+    params.append("pageNumber", this.pagingParams.pageNumber.toString());
+    params.append("pageSize", this.pagingParams.pageSize.toString());
+    return params;
+  }
+
+  setPagingParams = (pagingParams: PagingParams) => {
+    this.pagingParams = pagingParams;
+  };
 
   get recipesByName() {
     return Array.from(this.recipeRegistry.values()).sort((a, b) => {
@@ -30,15 +44,20 @@ export default class RecipeStore {
   loadRecipes = async () => {
     this.setLoadingInitial(true);
     try {
-      const recipes = await agent.Recipes.list();
-      recipes.forEach((recipe) => {
+      const result = await agent.Recipes.list(this.axiosParams);
+      result.data.forEach((recipe) => {
         this.setRecipe(recipe);
       });
+      this.setPagination(result.pagination);
       this.setLoadingInitial(false);
     } catch (error) {
       console.log(error);
       this.setLoadingInitial(false);
     }
+  };
+
+  setPagination = (pagination: Pagination) => {
+    this.pagination = pagination;
   };
 
   setEditMode = (edit: boolean) => {

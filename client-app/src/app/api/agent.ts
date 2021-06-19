@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { history } from "../..";
 import { Direction } from "../models/direction";
 import { Ingredient, IngredientValues } from "../models/ingredient";
+import { PaginatedResult } from "../models/pagination";
 import { Photo, Recipe, RecipeFormValues } from "../models/recipe";
 import { RecipeIngredient } from "../models/RecipeIngredient";
 import { User, UserFormValues } from "../models/user";
@@ -26,6 +27,14 @@ axios.interceptors.response.use(
   async (response) => {
     try {
       await sleep(1000);
+      const pagination = response.headers["pagination"];
+      if (pagination) {
+        response.data = new PaginatedResult(
+          response.data,
+          JSON.parse(pagination)
+        );
+        return response as AxiosResponse<PaginatedResult<any>>;
+      }
       return response;
     } catch (error) {
       console.log(error);
@@ -78,7 +87,10 @@ const requests = {
 };
 
 const Recipes = {
-  list: () => requests.get<Recipe[]>("/Recipes"),
+  list: (params: URLSearchParams) =>
+    axios
+      .get<PaginatedResult<Recipe[]>>("/Recipes", { params })
+      .then(responseBody),
   details: (id: string) => requests.get<Recipe>(`/Recipes/${id}`),
   create: (recipe: Recipe) => requests.post<void>("/Recipes", recipe),
   update: (recipe: RecipeFormValues) =>
