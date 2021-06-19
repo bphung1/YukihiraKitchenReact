@@ -5,6 +5,7 @@ export interface Direction {
 }
 
 export class DirectionFormValues {
-  cookingStepNumber: number = 0;
+  directionId: string = "";
   cookingDirection: string = "";
+  cookingStepNumber: number = 0;
 }

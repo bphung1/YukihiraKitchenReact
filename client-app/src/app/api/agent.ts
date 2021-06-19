@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import { history } from "../..";
-import { DirectionFormValues } from "../models/direction";
+import { Direction } from "../models/direction";
 import { Ingredient, IngredientValues } from "../models/ingredient";
 import { Photo, Recipe, RecipeFormValues } from "../models/recipe";
 import { RecipeIngredient } from "../models/RecipeIngredient";
@@ -102,7 +102,7 @@ const Recipes = {
 };
 
 const Directions = {
-  create: (id: string, direction: DirectionFormValues) =>
+  create: (id: string, direction: Direction) =>
     requests.post<void>(`/directions/${id}`, direction),
   delete: (id: string) => requests.del<void>(`/directions/${id}`),
 };

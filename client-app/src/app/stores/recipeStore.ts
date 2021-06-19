@@ -1,5 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
+import { Direction } from "../models/direction";
 import { Recipe, RecipeFormValues } from "../models/recipe";
 import { RecipeIngredient } from "../models/RecipeIngredient";
 
@@ -12,6 +13,7 @@ export default class RecipeStore {
   loadingInitial = false;
   uploading = false;
   directionLoading = false;
+  directionFormLoading = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -188,6 +190,21 @@ export default class RecipeStore {
       runInAction(() => {
         this.loading = false;
       });
+    }
+  };
+
+  createDirection = async (id: string, direction: Direction) => {
+    this.directionFormLoading = true;
+    try {
+      await agent.Directions.create(id, direction);
+      const recipe = await agent.Recipes.details(id);
+      runInAction(() => {
+        this.selectedRecipe!.directions = recipe.directions;
+        this.directionFormLoading = false;
+      });
+    } catch (err) {
+      console.log(err);
+      runInAction(() => (this.directionFormLoading = false));
     }
   };
 

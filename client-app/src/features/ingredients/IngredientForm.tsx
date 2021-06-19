@@ -25,7 +25,7 @@ export default observer(function IngredientForm() {
 
   useEffect(() => {
     setIngredientForm(new RecipeIngredientFormValues());
-  }, [setIngredientForm, ingredientStore]);
+  }, [setIngredientForm]);
 
   const validationSchema = Yup.object({
     quantity: Yup.number()
@@ -70,12 +70,10 @@ export default observer(function IngredientForm() {
                 placeholder="Measurement"
               />
 
-              <Form.Input>
-                <MyTextInput
-                  placeholder="Ingredient Name"
-                  name="ingredientName"
-                />
-              </Form.Input>
+              <MyTextInput
+                placeholder="Ingredient Name"
+                name="ingredientName"
+              />
 
               <Button
                 disabled={isSubmitting || !dirty || !isValid}
