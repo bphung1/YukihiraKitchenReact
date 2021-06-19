@@ -200,6 +200,7 @@ export default class RecipeStore {
       const recipe = await agent.Recipes.details(id);
       runInAction(() => {
         this.selectedRecipe!.directions = recipe.directions;
+        this.selectedRecipe!.directions = this.sortDirections;
         this.directionFormLoading = false;
       });
     } catch (err) {
